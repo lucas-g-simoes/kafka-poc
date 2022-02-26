@@ -4,7 +4,7 @@ spring:
 
 kafka:
   bootstrap:
-    url: 10.0.0.124:9022
+    url: localhost:9092
   topics:
     transactions:
       name: simoes-transactions
