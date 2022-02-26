@@ -1,44 +1,53 @@
 package br.com.simoes.smproducerservice.producer;
 
+import br.com.simoes.smproducerservice.dto.TransactionDTO;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.ProducerConfig;
-import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.common.serialization.StringSerializer;
+import org.apache.kafka.clients.producer.RecordMetadata;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.SendResult;
+import org.springframework.stereotype.Component;
+import org.springframework.util.concurrent.ListenableFutureCallback;
 
 import java.time.Instant;
-import java.util.Objects;
-import java.util.Properties;
-import java.util.concurrent.ExecutionException;
 
 @Slf4j
+@Component
+@RequiredArgsConstructor
 public class TransactionProducer {
 
-	public static void main(String[] args) throws ExecutionException, InterruptedException {
-		final KafkaProducer<String, String> producer = new KafkaProducer<>(properties());
+	@Value("${kafka.topics.transactions.name}")
+	private String topic;
 
-		final ProducerRecord<String, String> record = new ProducerRecord<>("simoes-transactions", "testeKey", "testeValue");
+	private final KafkaTemplate<String, String> kafkaTemplate;
 
-		producer
-			.send(record, (data, e) -> {
-				if (Objects.nonNull(e)) {
-					log.error("Error to producer message", e);
-					return;
+	public void send(final TransactionDTO transaction) throws JsonProcessingException {
+		final ObjectMapper mapper = new ObjectMapper();
+		final String json = mapper.writeValueAsString(transaction);
+
+		log.info("Send {} to {}", json, this.topic);
+		this.kafkaTemplate
+			.send(this.topic, json)
+			.addCallback(new ListenableFutureCallback<>() {
+
+				@Override
+				public void onFailure(final Throwable ex) {
+					log.error("Fail to send message", ex);
 				}
 
-				log.info("Topic {} / Partition {} / Offset {} / Timestamp {}", data.topic(), data.partition(), data.offset(), Instant.ofEpochMilli(data.timestamp()));
-			})
-			.get();
-	}
+				@Override
+				public void onSuccess(final SendResult<String, String> result) {
+					final RecordMetadata data = result.getRecordMetadata();
+					log.info("Success to publish message");
+					log.info("Topic {}", data.topic());
+					log.info("Partition {}", data.partition());
+					log.info("Date {}", Instant.ofEpochMilli(data.timestamp()));
+				}
 
-	private static Properties properties() {
-		final Properties properties = new Properties();
-
-		properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
-		properties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
-		properties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
-
-		return properties;
+			});
 	}
 
 }
