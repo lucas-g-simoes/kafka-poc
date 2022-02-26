@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: sm-consumer-service
+
+kafka:
+  bootstrap:
+    url: localhost:9092
+  topics:
+    transactions:
+      name: simoes-transactions
+      groupId: simoes-transactions-consumer
