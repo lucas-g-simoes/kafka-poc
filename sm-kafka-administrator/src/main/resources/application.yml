@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: sm-kafka-administrator
+
+kafka:
+  bootstrap:
+    url: 10.0.0.124:9022
+  topics:
+    transactions:
+      name: simoes-transactions
+      partitions: 5
+      replicas: 1
