@@ -6,6 +6,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,7 +20,7 @@ public class TransactionController {
 	private final TransactionProducer producer;
 
 	@PostMapping(consumes = APPLICATION_JSON_VALUE)
-	public ResponseEntity<Void> create(final TransactionDTO transaction) throws JsonProcessingException {
+	public ResponseEntity<Void> create(@RequestBody final TransactionDTO transaction) throws JsonProcessingException {
 		this.producer.send(transaction);
 		return ResponseEntity.noContent().build();
 	}
