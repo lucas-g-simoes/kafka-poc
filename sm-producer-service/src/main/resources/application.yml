@@ -1,12 +1,11 @@
 spring:
   application:
     name: sm-producer-service
+  kafka:
+    bootstrap-servers: localhost:9092
 
-kafka:
-  bootstrap:
-    url: localhost:9092
-  topics:
-    transactions:
-      name: simoes-transactions
-    transactions-validator:
-      name: simoes-transactions-validator
+topics:
+  transactions:
+    name: simoes-transactions
+  transactions-validator:
+    name: simoes-transactions-validator

@@ -1,8 +1,6 @@
 package br.com.simoes.smproducerservice.producer;
 
 import br.com.simoes.smproducerservice.dto.TransactionDTO;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.RecordMetadata;
@@ -19,18 +17,16 @@ import java.time.Instant;
 @RequiredArgsConstructor
 public class TransactionProducer {
 
-	@Value("${kafka.topics.transactions.name}")
+	@Value("${topics.transactions.name}")
 	private String topic;
 
-	private final KafkaTemplate<String, String> kafkaTemplate;
+	private final KafkaTemplate<String, TransactionDTO> kafkaTemplate;
 
-	public void send(final TransactionDTO transaction) throws JsonProcessingException {
-		final ObjectMapper mapper = new ObjectMapper();
-		final String json = mapper.writeValueAsString(transaction);
+	public void send(final TransactionDTO transaction) {
+		log.info("Send {} to {}", transaction, this.topic);
 
-		log.info("Send {} to {}", json, this.topic);
 		this.kafkaTemplate
-			.send(this.topic, transaction.getAccount().toString(), json)
+			.send(this.topic, transaction.getAccount().toString(), transaction)
 			.addCallback(new ListenableFutureCallback<>() {
 
 				@Override
@@ -39,7 +35,7 @@ public class TransactionProducer {
 				}
 
 				@Override
-				public void onSuccess(final SendResult<String, String> result) {
+				public void onSuccess(final SendResult<String, TransactionDTO> result) {
 					final RecordMetadata data = result.getRecordMetadata();
 					log.info("Success to publish message");
 					log.info("Topic {}", data.topic());

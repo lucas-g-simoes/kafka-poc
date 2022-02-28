@@ -1,17 +1,14 @@
 spring:
   application:
     name: sm-consumer-service
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: simoes-transactions-consumer
 
 server:
   port: 5000
 
-kafka:
-  bootstrap:
-    url: localhost:9092
-  topics:
-    transactions:
-      name: simoes-transactions
-      groupId: simoes-transactions-consumer
-    transactions-validator:
-      name: simoes-transactions-validator
-      groupId: simoes-transactions-validator-consumer
+topics:
+  transactions:
+    name: simoes-transactions
