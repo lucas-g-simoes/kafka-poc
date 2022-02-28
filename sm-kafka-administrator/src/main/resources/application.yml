@@ -10,3 +10,7 @@ kafka:
       name: simoes-transactions
       partitions: 5
       replicas: 1
+    transactions-validator:
+      name: simoes-transactions-validator
+      partitions: 5
+      replicas: 1

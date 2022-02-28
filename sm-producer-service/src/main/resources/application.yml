@@ -8,3 +8,5 @@ kafka:
   topics:
     transactions:
       name: simoes-transactions
+    transactions-validator:
+      name: simoes-transactions-validator

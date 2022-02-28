@@ -11,4 +11,6 @@ public class TransactionDTO {
 
 	private Integer amount;
 
+	private Integer account;
+
 }

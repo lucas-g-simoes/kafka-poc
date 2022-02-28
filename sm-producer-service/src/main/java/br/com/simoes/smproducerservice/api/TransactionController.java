@@ -2,6 +2,7 @@ package br.com.simoes.smproducerservice.api;
 
 import br.com.simoes.smproducerservice.dto.TransactionDTO;
 import br.com.simoes.smproducerservice.producer.TransactionProducer;
+import br.com.simoes.smproducerservice.producer.TransactionValidatorProducer;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,9 +20,12 @@ public class TransactionController {
 
 	private final TransactionProducer producer;
 
+	private final TransactionValidatorProducer validatorProducer;
+
 	@PostMapping(consumes = APPLICATION_JSON_VALUE)
 	public ResponseEntity<Void> create(@RequestBody final TransactionDTO transaction) throws JsonProcessingException {
 		this.producer.send(transaction);
+		this.validatorProducer.send(transaction);
 		return ResponseEntity.noContent().build();
 	}
 
