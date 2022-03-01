@@ -15,4 +15,6 @@ public class TransactionDTO {
 
 	private Integer account;
 
+	private String type;
+
 }

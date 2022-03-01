@@ -1,0 +1,19 @@
+{
+  "type": "record",
+  "name": "TransactionV2",
+  "namespace": "br.com.simoes",
+  "fields": [
+    {
+      "name": "accountId",
+      "type": "int"
+    },
+    {
+      "name": "ammount",
+      "type": "int"
+    },
+    {
+      "name": "type",
+      "type": "string"
+    }
+  ]
+}
