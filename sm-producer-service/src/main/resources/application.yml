@@ -3,6 +3,16 @@ spring:
     name: sm-producer-service
   kafka:
     bootstrap-servers: localhost:9092
+    properties:
+      specific:
+        avro:
+          reader: true
+      schema:
+        registry:
+          url: http://localhost:8081
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
 
 topics:
   transactions:

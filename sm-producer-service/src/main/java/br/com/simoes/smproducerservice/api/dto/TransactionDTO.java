@@ -1,4 +1,4 @@
-package br.com.simoes.smproducerservice.dto;
+package br.com.simoes.smproducerservice.api.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

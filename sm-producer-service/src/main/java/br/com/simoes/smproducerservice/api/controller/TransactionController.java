@@ -1,6 +1,7 @@
-package br.com.simoes.smproducerservice.api;
+package br.com.simoes.smproducerservice.api.controller;
 
-import br.com.simoes.smproducerservice.dto.TransactionDTO;
+import br.com.simoes.smproducerservice.api.dto.TransactionDTO;
+import br.com.simoes.smproducerservice.api.mapper.TransactionMapper;
 import br.com.simoes.smproducerservice.producer.TransactionProducer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,12 +17,12 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @RequestMapping("/transactions")
 public class TransactionController {
 
-	private final TransactionProducer producer;
+    private final TransactionProducer producer;
 
-	@PostMapping(consumes = APPLICATION_JSON_VALUE)
-	public ResponseEntity<Void> create(@RequestBody final TransactionDTO transaction) {
-		this.producer.send(transaction);
-		return ResponseEntity.noContent().build();
-	}
+    @PostMapping(consumes = APPLICATION_JSON_VALUE)
+    public ResponseEntity<Void> create(@RequestBody final TransactionDTO transaction) {
+        this.producer.send(TransactionMapper.fromDTO(transaction));
+        return ResponseEntity.noContent().build();
+    }
 
 }

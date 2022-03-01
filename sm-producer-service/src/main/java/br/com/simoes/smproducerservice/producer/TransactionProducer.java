@@ -1,6 +1,6 @@
 package br.com.simoes.smproducerservice.producer;
 
-import br.com.simoes.smproducerservice.dto.TransactionDTO;
+import br.com.simoes.Transaction;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.RecordMetadata;
@@ -20,13 +20,13 @@ public class TransactionProducer {
 	@Value("${topics.transactions.name}")
 	private String topic;
 
-	private final KafkaTemplate<String, TransactionDTO> kafkaTemplate;
+	private final KafkaTemplate<String, Transaction> kafkaTemplate;
 
-	public void send(final TransactionDTO transaction) {
+	public void send(final Transaction transaction) {
 		log.info("Send {} to {}", transaction, this.topic);
 
 		this.kafkaTemplate
-			.send(this.topic, transaction.getAccount().toString(), transaction)
+			.send(this.topic, String.valueOf(transaction.getAccountId()), transaction)
 			.addCallback(new ListenableFutureCallback<>() {
 
 				@Override
@@ -35,14 +35,13 @@ public class TransactionProducer {
 				}
 
 				@Override
-				public void onSuccess(final SendResult<String, TransactionDTO> result) {
+				public void onSuccess(final SendResult<String, Transaction> result) {
 					final RecordMetadata data = result.getRecordMetadata();
 					log.info("Success to publish message");
 					log.info("Topic {}", data.topic());
 					log.info("Partition {}", data.partition());
 					log.info("Date {}", Instant.ofEpochMilli(data.timestamp()));
 				}
-
 			});
 	}
 
